@@ -45,8 +45,8 @@ def toPosix(path_windows: str) -&gt; str:
         &gt;&gt;&gt; wslPath.toPosix(pathwin)
         /mnt/c/hoge/fuga
     &#34;&#34;&#34;
-    if re.search(&#34;/&#34;, path_windows):
-        raise ValueError(f&#34;{path_windows} is not a Windows path&#34;)
+    if re.search(r&#39;[/|?|&#34;|&lt;|&gt;|\|]&#39;, path_windows):
+        raise ValueError(f&#34;{path_windows} is an invalid Windows path&#34;)
 
     path_windows = re.sub(r&#34;\\+&#34;, r&#34;\\&#34;, path_windows)
     path_posix = path_windows.replace(&#34;\\&#34;, &#34;/&#34;)
@@ -127,8 +127,8 @@ hoge/fuga
         &gt;&gt;&gt; wslPath.toPosix(pathwin)
         /mnt/c/hoge/fuga
     &#34;&#34;&#34;
-    if re.search(&#34;/&#34;, path_windows):
-        raise ValueError(f&#34;{path_windows} is not a Windows path&#34;)
+    if re.search(r&#39;[/|?|&#34;|&lt;|&gt;|\|]&#39;, path_windows):
+        raise ValueError(f&#34;{path_windows} is an invalid Windows path&#34;)
 
     path_windows = re.sub(r&#34;\\+&#34;, r&#34;\\&#34;, path_windows)
     path_posix = path_windows.replace(&#34;\\&#34;, &#34;/&#34;)
