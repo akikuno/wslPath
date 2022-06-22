@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="wslPath",
-    version="0.2.2",
+    version="0.2.3",
     author="Akihiro Kuno",
     author_email="akuno@md.tsukuba.ac.jp",
     description="Python module to convert between Windows and POSIX path in WSL",
