@@ -30,21 +30,32 @@
 <a href="https://pypi.org/project/wslPath/"><img alt="PyPI" src="https://img.shields.io/pypi/v/wslPath.svg?label=PyPI&amp;color=orange&amp;style=flat-square"></a></p>
 <h1 id="wslpath">wslPath</h1>
 <p><code><a title="wslPath" href="#wslPath">wslPath</a></code> is a Python module to convert between Windows and POSIX path in WSL</p>
-<h2 id="examples">Examples</h2>
+<h2 id="install">Install</h2>
+<pre><code class="language-python">pip install wslPath
+</code></pre>
+<h2 id="usages">Usages</h2>
 <pre><code class="language-python">import wslPath
 
+# Windows to Posix
+
+## Relative path
 pathwin = &quot;hoge\\fuga&quot;
 wslPath.toPosix(pathwin)
 # -&gt; &quot;hoge/fuga&quot;
 
+## Absolute path
 pathwin = &quot;C:\\hoge\\fuga&quot;
 wslPath.toPosix(pathwin)
 # -&gt; &quot;/mnt/c/hoge/fuga&quot;
 
+# Posix to Windows
+
+## Relative path
 pathposix = &quot;hoge/fuga&quot;
 wslPath.toWindows(pathposix)
 # -&gt; &quot;hoge\\fuga&quot;
 
+## Absolute path
 pathposix = &quot;/mnt/c/hoge/fuga&quot;
 wslPath.toWindows(pathposix)
 # -&gt; &quot;C:\\hoge\\fuga&quot;
@@ -82,7 +93,8 @@ from .main import *</code></pre>
 <div class="toc">
 <ul>
 <li><a href="#wslpath">wslPath</a><ul>
-<li><a href="#examples">Examples</a></li>
+<li><a href="#install">Install</a></li>
+<li><a href="#usages">Usages</a></li>
 </ul>
 </li>
 </ul>
