@@ -1,5 +1,11 @@
+import pytest
+
 from src.wslPath import toPosix
 from src.wslPath import toWindows
+
+def test_toPosix_ValueError():
+    with pytest.raises(ValueError):
+        toPosix(r"hoge|fuga")
 
 def test_toPosix_relatives1():
     assert toPosix(r".") == "."

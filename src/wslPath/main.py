@@ -16,8 +16,8 @@ def toPosix(path_windows: str) -> str:
         >>> wslPath.toPosix(pathwin)
         /mnt/c/hoge/fuga
     """
-    if re.search("/", path_windows):
-        raise ValueError(f"{path_windows} is not a Windows path")
+    if re.search(r'[/|?|"|<|>|\|]', path_windows):
+        raise ValueError(f"{path_windows} is an invalid Windows path")
 
     path_windows = re.sub(r"\\+", r"\\", path_windows)
     path_posix = path_windows.replace("\\", "/")
