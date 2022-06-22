@@ -8,23 +8,37 @@
 
 `wslPath` is a Python module to convert between Windows and POSIX path in WSL
 
-## Examples
+## Install
+
+```python
+pip install wslPath
+```
+
+## Usages
 
 ```python
 import wslPath
 
+# Windows to Posix
+
+## Relative path
 pathwin = "hoge\\fuga"
 wslPath.toPosix(pathwin)
 # -> "hoge/fuga"
 
+## Absolute path
 pathwin = "C:\\hoge\\fuga"
 wslPath.toPosix(pathwin)
 # -> "/mnt/c/hoge/fuga"
 
+# Posix to Windows
+
+## Relative path
 pathposix = "hoge/fuga"
 wslPath.toWindows(pathposix)
 # -> "hoge\\fuga"
 
+## Absolute path
 pathposix = "/mnt/c/hoge/fuga"
 wslPath.toWindows(pathposix)
 # -> "C:\\hoge\\fuga"
