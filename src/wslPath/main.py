@@ -4,7 +4,7 @@
 import re
 
 
-def path_from_windows_to_posix(path_windows: str) -> str:
+def toPosix(path_windows: str) -> str:
     """Convert a Windows path to a POSIX path
     """
     if re.search("/", path_windows):
@@ -21,7 +21,7 @@ def path_from_windows_to_posix(path_windows: str) -> str:
     return path_posix
 
 
-def path_from_posix_to_windows(path_posix: str) -> str:
+def toWindows(path_posix: str) -> str:
     """Convert a POSIX path to a Windows path
     """
 
