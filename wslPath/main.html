@@ -35,6 +35,15 @@ import re
 
 def toPosix(path_windows: str) -&gt; str:
     &#34;&#34;&#34;Convert a Windows path to a POSIX path
+    Examples:
+        &gt;&gt;&gt; import wslPath
+        &gt;&gt;&gt; pathwin = &#34;hoge\\fuga&#34;
+        &gt;&gt;&gt; wslPath.toPosix(pathwin)
+        hoge/fuga
+
+        &gt;&gt;&gt; pathwin = &#34;C:\\hoge\\fuga&#34;
+        &gt;&gt;&gt; wslPath.toPosix(pathwin)
+        /mnt/c/hoge/fuga
     &#34;&#34;&#34;
     if re.search(&#34;/&#34;, path_windows):
         raise ValueError(f&#34;{path_windows} is not a Windows path&#34;)
@@ -52,6 +61,15 @@ def toPosix(path_windows: str) -&gt; str:
 
 def toWindows(path_posix: str) -&gt; str:
     &#34;&#34;&#34;Convert a POSIX path to a Windows path
+    Examples:
+    &gt;&gt;&gt; import wslPath
+    &gt;&gt;&gt; pathposix = &#34;hoge/fuga&#34;
+    &gt;&gt;&gt; wslPath.toWindows(pathposix)
+    hoge\\fuga
+
+    &gt;&gt;&gt; pathposix = &#34;/mnt/c/hoge/fuga&#34;
+    &gt;&gt;&gt; wslPath.toWindows(pathposix)
+    C:\\hoge\\fuga
     &#34;&#34;&#34;
 
     if re.search(r&#34;\\&#34;, path_posix):
@@ -82,13 +100,32 @@ def toWindows(path_posix: str) -&gt; str:
 <span>def <span class="ident">toPosix</span></span>(<span>path_windows: str) ‑> str</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Convert a Windows path to a POSIX path</p></div>
+<div class="desc"><p>Convert a Windows path to a POSIX path</p>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; import wslPath
+&gt;&gt;&gt; pathwin = &quot;hoge\fuga&quot;
+&gt;&gt;&gt; wslPath.toPosix(pathwin)
+hoge/fuga
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; pathwin = &quot;C:\hoge\fuga&quot;
+&gt;&gt;&gt; wslPath.toPosix(pathwin)
+/mnt/c/hoge/fuga
+</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def toPosix(path_windows: str) -&gt; str:
     &#34;&#34;&#34;Convert a Windows path to a POSIX path
+    Examples:
+        &gt;&gt;&gt; import wslPath
+        &gt;&gt;&gt; pathwin = &#34;hoge\\fuga&#34;
+        &gt;&gt;&gt; wslPath.toPosix(pathwin)
+        hoge/fuga
+
+        &gt;&gt;&gt; pathwin = &#34;C:\\hoge\\fuga&#34;
+        &gt;&gt;&gt; wslPath.toPosix(pathwin)
+        /mnt/c/hoge/fuga
     &#34;&#34;&#34;
     if re.search(&#34;/&#34;, path_windows):
         raise ValueError(f&#34;{path_windows} is not a Windows path&#34;)
@@ -108,13 +145,32 @@ def toWindows(path_posix: str) -&gt; str:
 <span>def <span class="ident">toWindows</span></span>(<span>path_posix: str) ‑> str</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Convert a POSIX path to a Windows path</p></div>
+<div class="desc"><p>Convert a POSIX path to a Windows path
+Examples:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; import wslPath
+&gt;&gt;&gt; pathposix = &quot;hoge/fuga&quot;
+&gt;&gt;&gt; wslPath.toWindows(pathposix)
+hoge\fuga
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; pathposix = &quot;/mnt/c/hoge/fuga&quot;
+&gt;&gt;&gt; wslPath.toWindows(pathposix)
+C:\hoge\fuga
+</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def toWindows(path_posix: str) -&gt; str:
     &#34;&#34;&#34;Convert a POSIX path to a Windows path
+    Examples:
+    &gt;&gt;&gt; import wslPath
+    &gt;&gt;&gt; pathposix = &#34;hoge/fuga&#34;
+    &gt;&gt;&gt; wslPath.toWindows(pathposix)
+    hoge\\fuga
+
+    &gt;&gt;&gt; pathposix = &#34;/mnt/c/hoge/fuga&#34;
+    &gt;&gt;&gt; wslPath.toWindows(pathposix)
+    C:\\hoge\\fuga
     &#34;&#34;&#34;
 
     if re.search(r&#34;\\&#34;, path_posix):
