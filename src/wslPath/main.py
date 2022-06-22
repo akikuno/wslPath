@@ -6,6 +6,15 @@ import re
 
 def toPosix(path_windows: str) -> str:
     """Convert a Windows path to a POSIX path
+    Examples:
+        >>> import wslPath
+        >>> pathwin = "hoge\\fuga"
+        >>> wslPath.toPosix(pathwin)
+        hoge/fuga
+
+        >>> pathwin = "C:\\hoge\\fuga"
+        >>> wslPath.toPosix(pathwin)
+        /mnt/c/hoge/fuga
     """
     if re.search("/", path_windows):
         raise ValueError(f"{path_windows} is not a Windows path")
@@ -23,6 +32,15 @@ def toPosix(path_windows: str) -> str:
 
 def toWindows(path_posix: str) -> str:
     """Convert a POSIX path to a Windows path
+    Examples:
+    >>> import wslPath
+    >>> pathposix = "hoge/fuga"
+    >>> wslPath.toWindows(pathposix)
+    hoge\\fuga
+
+    >>> pathposix = "/mnt/c/hoge/fuga"
+    >>> wslPath.toWindows(pathposix)
+    C:\\hoge\\fuga
     """
 
     if re.search(r"\\", path_posix):
