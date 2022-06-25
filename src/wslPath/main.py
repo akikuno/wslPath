@@ -43,6 +43,9 @@ def toWindows(path_posix: str) -> str:
     C:\\hoge\\fuga
     """
 
+    if re.search(r'[?|"|<|>|\|]', path_posix):
+        raise ValueError(f"{path_posix} includes illegal filename characters on Windows")
+
     if re.search(r"\\", path_posix):
         raise ValueError(f"{path_posix} is not a POSIX path")
 
