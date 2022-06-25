@@ -72,6 +72,9 @@ def toWindows(path_posix: str) -&gt; str:
     C:\\hoge\\fuga
     &#34;&#34;&#34;
 
+    if re.search(r&#39;[?|&#34;|&lt;|&gt;|\|]&#39;, path_posix):
+        raise ValueError(f&#34;{path_posix} includes illegal filename characters on Windows&#34;)
+
     if re.search(r&#34;\\&#34;, path_posix):
         raise ValueError(f&#34;{path_posix} is not a POSIX path&#34;)
 
@@ -172,6 +175,9 @@ C:\hoge\fuga
     &gt;&gt;&gt; wslPath.toWindows(pathposix)
     C:\\hoge\\fuga
     &#34;&#34;&#34;
+
+    if re.search(r&#39;[?|&#34;|&lt;|&gt;|\|]&#39;, path_posix):
+        raise ValueError(f&#34;{path_posix} includes illegal filename characters on Windows&#34;)
 
     if re.search(r&#34;\\&#34;, path_posix):
         raise ValueError(f&#34;{path_posix} is not a POSIX path&#34;)
