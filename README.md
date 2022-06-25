@@ -3,15 +3,23 @@
 [![Test](https://img.shields.io/github/workflow/status/akikuno/wslPath/Pytest?json&label=Test&color=brightgreen&style=flat-square)](https://github.com/akikuno/wslPath/actions)
 [![Python](https://img.shields.io/pypi/pyversions/wslPath.svg?label=Python&color=blue&style=flat-square)](https://pypi.org/project/wslPath/)
 [![PyPI](https://img.shields.io/pypi/v/wslPath.svg?label=PyPI&color=orange&style=flat-square)](https://pypi.org/project/wslPath/)
-
+[![Conda](https://img.shields.io/conda/v/conda-forge/wslPath?label=Conda&color=orange&style=flat-square)](https://anaconda.org/conda-forge/wslpath)
 # wslPath
 
 `wslPath` is a Python module to convert between Windows and POSIX path in WSL
 
 ## Install
 
+From [PyPI](https://pypi.org/project/wslPath/):
+
 ```python
 pip install wslPath
+```
+
+From [Conda](https://anaconda.org/conda-forge/wslpath):
+
+```python
+conda install -c conda-forge wslPath
 ```
 
 ## Usages
