@@ -30,7 +30,7 @@
 <a href="https://pypi.org/project/wslPath/"><img alt="PyPI" src="https://img.shields.io/pypi/v/wslPath.svg?label=PyPI&amp;color=orange&amp;style=flat-square"></a>
 <a href="https://anaconda.org/conda-forge/wslpath"><img alt="Conda" src="https://img.shields.io/conda/v/conda-forge/wslPath?label=Conda&amp;color=orange&amp;style=flat-square"></a></p>
 <h1 id="wslpath">wslPath</h1>
-<p><code><a title="wslPath" href="#wslPath">wslPath</a></code> is a Python module to convert between Windows and POSIX path in WSL</p>
+<p><code><a title="wslPath" href="#wslPath">wslPath</a></code> is a Python module to convert between Windows and POSIX paths in WSL</p>
 <h2 id="install">Install</h2>
 <p>From <a href="https://pypi.org/project/wslPath/">PyPI</a>:</p>
 <pre><code class="language-python">pip install wslPath
@@ -45,24 +45,24 @@
 
 ## Relative path
 pathwin = &quot;hoge\\fuga&quot;
-wslPath.toPosix(pathwin)
+wslPath.to_posix(pathwin)
 # -&gt; &quot;hoge/fuga&quot;
 
 ## Absolute path
 pathwin = &quot;C:\\hoge\\fuga&quot;
-wslPath.toPosix(pathwin)
+wslPath.to_posix(pathwin)
 # -&gt; &quot;/mnt/c/hoge/fuga&quot;
 
 # Posix to Windows
 
 ## Relative path
 pathposix = &quot;hoge/fuga&quot;
-wslPath.toWindows(pathposix)
+wslPath.to_windows(pathposix)
 # -&gt; &quot;hoge\\fuga&quot;
 
 ## Absolute path
 pathposix = &quot;/mnt/c/hoge/fuga&quot;
-wslPath.toWindows(pathposix)
+wslPath.to_windows(pathposix)
 # -&gt; &quot;C:\\hoge\\fuga&quot;
 
 </code></pre>
@@ -82,7 +82,7 @@ from .main import *</code></pre>
 <dl>
 <dt><code class="name"><a title="wslPath.main" href="main.html">wslPath.main</a></code></dt>
 <dd>
-<div class="desc"><p>Convert between Linux and Windows path in WSL (Windows Subsystem for Linux).</p></div>
+<div class="desc"></div>
 </dd>
 </dl>
 </section>

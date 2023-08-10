@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>wslPath.main API documentation</title>
-<meta name="description" content="Convert between Linux and Windows path in WSL (Windows Subsystem for Linux)." />
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,74 +22,107 @@
 <h1 class="title">Module <code>wslPath.main</code></h1>
 </header>
 <section id="section-intro">
-<p>Convert between Linux and Windows path in WSL (Windows Subsystem for Linux).</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;Convert between Linux and Windows path in WSL (Windows Subsystem for Linux).
+<pre><code class="python">import re
+
+&#34;&#34;&#34;Convert between Linux and Windows path in WSL (Windows Subsystem for Linux).
 &#34;&#34;&#34;
 
-import re
+def is_windows_path(path: str) -&gt; bool:
+    &#34;&#34;&#34;Determine if the given path is in Windows format.&#34;&#34;&#34;
+    # Check for the current directory
+    if path == &#34;.&#34;:
+        return True
+    # Check for drive letter and backslashes
+    return bool(re.match(r&#39;^[A-Za-z]:\\&#39;, path)) or &#39;\\&#39; in path
 
 
-def toPosix(path_windows: str) -&gt; str:
+def is_posix_path(path: str) -&gt; bool:
+    &#34;&#34;&#34;Determine if the given path is in POSIX format.&#34;&#34;&#34;
+    # Check for the current directory
+    if path == &#34;.&#34;:
+        return True
+    return &#39;/&#39; in path and not &#39;\\&#39; in path
+
+
+def has_invalid_windows_path_chars(path: str) -&gt; bool:
+    &#34;&#34;&#34;Check if the given path contains invalid Windows path characters.&#34;&#34;&#34;
+    # Check for invalid characters in filenames or directory names
+    invalid_chars_pattern = re.compile(r&#39;[\^&lt;&gt;&#34;|?*]&#39;)
+    invalid_backslash = re.compile(r&#39;(?&lt;=[^A-Za-z0-9]):|:(?=[^\\])&#39;)
+    ascii_control_chars = any(ord(char) &lt; 32 for char in path)
+    invalid_colon = re.search(r&#39;^(?![A-Za-z]:\\).*:&#39;, path)
+    return bool(
+        invalid_chars_pattern.search(path) or
+        ascii_control_chars or
+        invalid_colon or
+        invalid_backslash.search(path)
+    )
+
+###########################################################
+# main
+###########################################################
+
+def to_posix(path_windows: str) -&gt; str:
     &#34;&#34;&#34;Convert a Windows path to a POSIX path
     Examples:
         &gt;&gt;&gt; import wslPath
         &gt;&gt;&gt; pathwin = &#34;hoge\\fuga&#34;
-        &gt;&gt;&gt; wslPath.toPosix(pathwin)
+        &gt;&gt;&gt; wslPath.to_posix(pathwin)
         hoge/fuga
 
         &gt;&gt;&gt; pathwin = &#34;C:\\hoge\\fuga&#34;
-        &gt;&gt;&gt; wslPath.toPosix(pathwin)
+        &gt;&gt;&gt; wslPath.to_posix(pathwin)
         /mnt/c/hoge/fuga
     &#34;&#34;&#34;
-    if re.search(r&#39;[/|?|&#34;|&lt;|&gt;|\|]&#39;, path_windows):
+    if not is_windows_path(path_windows):
         raise ValueError(f&#34;{path_windows} is an invalid Windows path&#34;)
 
-    path_windows = re.sub(r&#34;\\+&#34;, r&#34;\\&#34;, path_windows)
+    # Remove consecutive backslashes
+    path_windows = re.sub(r&#34;\\\\+&#34;, r&#34;\\&#34;, path_windows)
     path_posix = path_windows.replace(&#34;\\&#34;, &#34;/&#34;)
 
-    if re.search(r&#34;:&#34;, path_windows):
-        drive, directory = path_posix.split(&#34;:/&#34;)
+    # Convert drive letter to POSIX format
+    drive_pattern = re.compile(r&#34;^([A-Z]):/&#34;)
+    if drive_pattern.search(path_posix):
+        drive, directory = path_posix.split(&#34;:/&#34;, 1)
         drive = drive.lower()
         path_posix = f&#34;/mnt/{drive}/{directory}&#34;
 
     return path_posix
 
 
-def toWindows(path_posix: str) -&gt; str:
+def to_windows(path_posix: str) -&gt; str:
     &#34;&#34;&#34;Convert a POSIX path to a Windows path
     Examples:
     &gt;&gt;&gt; import wslPath
     &gt;&gt;&gt; pathposix = &#34;hoge/fuga&#34;
-    &gt;&gt;&gt; wslPath.toWindows(pathposix)
+    &gt;&gt;&gt; wslPath.to_windows(pathposix)
     hoge\\fuga
 
     &gt;&gt;&gt; pathposix = &#34;/mnt/c/hoge/fuga&#34;
-    &gt;&gt;&gt; wslPath.toWindows(pathposix)
+    &gt;&gt;&gt; wslPath.to_windows(pathposix)
     C:\\hoge\\fuga
     &#34;&#34;&#34;
 
-    if re.search(r&#39;[?|&#34;|&lt;|&gt;|\|]&#39;, path_posix):
-        raise ValueError(f&#34;{path_posix} includes illegal filename characters on Windows&#34;)
+    if has_invalid_windows_path_chars(path_posix):
+        raise ValueError(f&#34;{path_posix} includes invalid filepath characters on Windows&#34;)
 
-    if re.search(r&#34;\\&#34;, path_posix):
+    if not is_posix_path(path_posix):
         raise ValueError(f&#34;{path_posix} is not a POSIX path&#34;)
 
+    # Normalize slashes
     path_posix = re.sub(r&#34;/+&#34;, &#34;/&#34;, path_posix)
-    path_windows = path_posix.split(&#34;/&#34;)
 
-    if &#34;mnt&#34; in path_windows:
-        for i, d in enumerate(path_windows):
-            if d == &#34;mnt&#34;:
-                drive = path_windows[i+1].upper() + &#34;:&#34;
-                directory = &#34;\\&#34;.join(path_windows[i+2:])
-                break
-        path_windows = [drive, directory]
+    # Convert /mnt/c/ style paths to C:\
+    if path_posix.startswith(&#34;/mnt/&#34;):
+        drive_letter = path_posix[5].upper()
+        path_posix = drive_letter + &#34;:&#34; + path_posix[6:]
 
-    return &#34;\\&#34;.join(path_windows)</code></pre>
+    return path_posix.replace(&#34;/&#34;, &#34;\\&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -99,101 +132,160 @@ def toWindows(path_posix: str) -&gt; str:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="wslPath.main.toPosix"><code class="name flex">
-<span>def <span class="ident">toPosix</span></span>(<span>path_windows: str) ‑> str</span>
+<dt id="wslPath.main.has_invalid_windows_path_chars"><code class="name flex">
+<span>def <span class="ident">has_invalid_windows_path_chars</span></span>(<span>path: str) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if the given path contains invalid Windows path characters.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_invalid_windows_path_chars(path: str) -&gt; bool:
+    &#34;&#34;&#34;Check if the given path contains invalid Windows path characters.&#34;&#34;&#34;
+    # Check for invalid characters in filenames or directory names
+    invalid_chars_pattern = re.compile(r&#39;[\^&lt;&gt;&#34;|?*]&#39;)
+    invalid_backslash = re.compile(r&#39;(?&lt;=[^A-Za-z0-9]):|:(?=[^\\])&#39;)
+    ascii_control_chars = any(ord(char) &lt; 32 for char in path)
+    invalid_colon = re.search(r&#39;^(?![A-Za-z]:\\).*:&#39;, path)
+    return bool(
+        invalid_chars_pattern.search(path) or
+        ascii_control_chars or
+        invalid_colon or
+        invalid_backslash.search(path)
+    )</code></pre>
+</details>
+</dd>
+<dt id="wslPath.main.is_posix_path"><code class="name flex">
+<span>def <span class="ident">is_posix_path</span></span>(<span>path: str) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Determine if the given path is in POSIX format.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_posix_path(path: str) -&gt; bool:
+    &#34;&#34;&#34;Determine if the given path is in POSIX format.&#34;&#34;&#34;
+    # Check for the current directory
+    if path == &#34;.&#34;:
+        return True
+    return &#39;/&#39; in path and not &#39;\\&#39; in path</code></pre>
+</details>
+</dd>
+<dt id="wslPath.main.is_windows_path"><code class="name flex">
+<span>def <span class="ident">is_windows_path</span></span>(<span>path: str) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Determine if the given path is in Windows format.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_windows_path(path: str) -&gt; bool:
+    &#34;&#34;&#34;Determine if the given path is in Windows format.&#34;&#34;&#34;
+    # Check for the current directory
+    if path == &#34;.&#34;:
+        return True
+    # Check for drive letter and backslashes
+    return bool(re.match(r&#39;^[A-Za-z]:\\&#39;, path)) or &#39;\\&#39; in path</code></pre>
+</details>
+</dd>
+<dt id="wslPath.main.to_posix"><code class="name flex">
+<span>def <span class="ident">to_posix</span></span>(<span>path_windows: str) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Convert a Windows path to a POSIX path</p>
 <h2 id="examples">Examples</h2>
 <pre><code class="language-python-repl">&gt;&gt;&gt; import wslPath
 &gt;&gt;&gt; pathwin = &quot;hoge\fuga&quot;
-&gt;&gt;&gt; wslPath.toPosix(pathwin)
+&gt;&gt;&gt; wslPath.to_posix(pathwin)
 hoge/fuga
 </code></pre>
 <pre><code class="language-python-repl">&gt;&gt;&gt; pathwin = &quot;C:\hoge\fuga&quot;
-&gt;&gt;&gt; wslPath.toPosix(pathwin)
+&gt;&gt;&gt; wslPath.to_posix(pathwin)
 /mnt/c/hoge/fuga
 </code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def toPosix(path_windows: str) -&gt; str:
+<pre><code class="python">def to_posix(path_windows: str) -&gt; str:
     &#34;&#34;&#34;Convert a Windows path to a POSIX path
     Examples:
         &gt;&gt;&gt; import wslPath
         &gt;&gt;&gt; pathwin = &#34;hoge\\fuga&#34;
-        &gt;&gt;&gt; wslPath.toPosix(pathwin)
+        &gt;&gt;&gt; wslPath.to_posix(pathwin)
         hoge/fuga
 
         &gt;&gt;&gt; pathwin = &#34;C:\\hoge\\fuga&#34;
-        &gt;&gt;&gt; wslPath.toPosix(pathwin)
+        &gt;&gt;&gt; wslPath.to_posix(pathwin)
         /mnt/c/hoge/fuga
     &#34;&#34;&#34;
-    if re.search(r&#39;[/|?|&#34;|&lt;|&gt;|\|]&#39;, path_windows):
+    if not is_windows_path(path_windows):
         raise ValueError(f&#34;{path_windows} is an invalid Windows path&#34;)
 
-    path_windows = re.sub(r&#34;\\+&#34;, r&#34;\\&#34;, path_windows)
+    # Remove consecutive backslashes
+    path_windows = re.sub(r&#34;\\\\+&#34;, r&#34;\\&#34;, path_windows)
     path_posix = path_windows.replace(&#34;\\&#34;, &#34;/&#34;)
 
-    if re.search(r&#34;:&#34;, path_windows):
-        drive, directory = path_posix.split(&#34;:/&#34;)
+    # Convert drive letter to POSIX format
+    drive_pattern = re.compile(r&#34;^([A-Z]):/&#34;)
+    if drive_pattern.search(path_posix):
+        drive, directory = path_posix.split(&#34;:/&#34;, 1)
         drive = drive.lower()
         path_posix = f&#34;/mnt/{drive}/{directory}&#34;
 
     return path_posix</code></pre>
 </details>
 </dd>
-<dt id="wslPath.main.toWindows"><code class="name flex">
-<span>def <span class="ident">toWindows</span></span>(<span>path_posix: str) ‑> str</span>
+<dt id="wslPath.main.to_windows"><code class="name flex">
+<span>def <span class="ident">to_windows</span></span>(<span>path_posix: str) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Convert a POSIX path to a Windows path
 Examples:</p>
 <pre><code class="language-python-repl">&gt;&gt;&gt; import wslPath
 &gt;&gt;&gt; pathposix = &quot;hoge/fuga&quot;
-&gt;&gt;&gt; wslPath.toWindows(pathposix)
+&gt;&gt;&gt; wslPath.to_windows(pathposix)
 hoge\fuga
 </code></pre>
 <pre><code class="language-python-repl">&gt;&gt;&gt; pathposix = &quot;/mnt/c/hoge/fuga&quot;
-&gt;&gt;&gt; wslPath.toWindows(pathposix)
+&gt;&gt;&gt; wslPath.to_windows(pathposix)
 C:\hoge\fuga
 </code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def toWindows(path_posix: str) -&gt; str:
+<pre><code class="python">def to_windows(path_posix: str) -&gt; str:
     &#34;&#34;&#34;Convert a POSIX path to a Windows path
     Examples:
     &gt;&gt;&gt; import wslPath
     &gt;&gt;&gt; pathposix = &#34;hoge/fuga&#34;
-    &gt;&gt;&gt; wslPath.toWindows(pathposix)
+    &gt;&gt;&gt; wslPath.to_windows(pathposix)
     hoge\\fuga
 
     &gt;&gt;&gt; pathposix = &#34;/mnt/c/hoge/fuga&#34;
-    &gt;&gt;&gt; wslPath.toWindows(pathposix)
+    &gt;&gt;&gt; wslPath.to_windows(pathposix)
     C:\\hoge\\fuga
     &#34;&#34;&#34;
 
-    if re.search(r&#39;[?|&#34;|&lt;|&gt;|\|]&#39;, path_posix):
-        raise ValueError(f&#34;{path_posix} includes illegal filename characters on Windows&#34;)
+    if has_invalid_windows_path_chars(path_posix):
+        raise ValueError(f&#34;{path_posix} includes invalid filepath characters on Windows&#34;)
 
-    if re.search(r&#34;\\&#34;, path_posix):
+    if not is_posix_path(path_posix):
         raise ValueError(f&#34;{path_posix} is not a POSIX path&#34;)
 
+    # Normalize slashes
     path_posix = re.sub(r&#34;/+&#34;, &#34;/&#34;, path_posix)
-    path_windows = path_posix.split(&#34;/&#34;)
 
-    if &#34;mnt&#34; in path_windows:
-        for i, d in enumerate(path_windows):
-            if d == &#34;mnt&#34;:
-                drive = path_windows[i+1].upper() + &#34;:&#34;
-                directory = &#34;\\&#34;.join(path_windows[i+2:])
-                break
-        path_windows = [drive, directory]
+    # Convert /mnt/c/ style paths to C:\
+    if path_posix.startswith(&#34;/mnt/&#34;):
+        drive_letter = path_posix[5].upper()
+        path_posix = drive_letter + &#34;:&#34; + path_posix[6:]
 
-    return &#34;\\&#34;.join(path_windows)</code></pre>
+    return path_posix.replace(&#34;/&#34;, &#34;\\&#34;)</code></pre>
 </details>
 </dd>
 </dl>
@@ -214,8 +306,11 @@ C:\hoge\fuga
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="wslPath.main.toPosix" href="#wslPath.main.toPosix">toPosix</a></code></li>
-<li><code><a title="wslPath.main.toWindows" href="#wslPath.main.toWindows">toWindows</a></code></li>
+<li><code><a title="wslPath.main.has_invalid_windows_path_chars" href="#wslPath.main.has_invalid_windows_path_chars">has_invalid_windows_path_chars</a></code></li>
+<li><code><a title="wslPath.main.is_posix_path" href="#wslPath.main.is_posix_path">is_posix_path</a></code></li>
+<li><code><a title="wslPath.main.is_windows_path" href="#wslPath.main.is_windows_path">is_windows_path</a></code></li>
+<li><code><a title="wslPath.main.to_posix" href="#wslPath.main.to_posix">to_posix</a></code></li>
+<li><code><a title="wslPath.main.to_windows" href="#wslPath.main.to_windows">to_windows</a></code></li>
 </ul>
 </li>
 </ul>
