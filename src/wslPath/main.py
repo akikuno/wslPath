@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from pathlib import Path
+from pathlib import Path, WindowsPath
 """Convert between Linux and Windows path in WSL (Windows Subsystem for Linux).
 """
 
@@ -90,14 +90,16 @@ def to_windows(path: str | Path) -> str | Path:
     C:\\hoge\\fuga
     """
     flag_path = isinstance(path, Path)
-    path = str(path)
+
     if has_invalid_windows_path_chars(path):
         raise ValueError(f"{path} includes invalid filepath characters on Windows")
 
-    if not is_posix_path(path):
+
+    if not is_posix_path(path) and not isinstance(path, WindowsPath):
         raise ValueError(f"{path} is not a POSIX path")
 
     # Normalize slashes
+    path = str(path).replace("\\", "/")
     path = re.sub(r"/+", "/", path)
 
     # Convert /mnt/c/ style paths to C:\
