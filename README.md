@@ -51,4 +51,22 @@ pathposix = "/mnt/c/hoge/fuga"
 wslPath.to_windows(pathposix)
 # -> "C:\\hoge\\fuga"
 
+# Identify path type (POSIX or Windows)
+
+path = "hoge/fuga"
+wslPath.is_posix_path(path)
+# -> True
+
+path = "hoge\\fuga"
+wslPath.is_posix_path(path)
+# -> False
+
+path = "hoge/fuga"
+wslPath.is_windows_path(path)
+# -> False
+
+path = "hoge\\fuga"
+wslPath.is_windows_path(path)
+# -> True
+
 ```
