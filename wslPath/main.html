@@ -29,7 +29,7 @@
 <pre><code class="python">from __future__ import annotations
 
 import re
-from pathlib import Path
+from pathlib import Path, WindowsPath
 &#34;&#34;&#34;Convert between Linux and Windows path in WSL (Windows Subsystem for Linux).
 &#34;&#34;&#34;
 
@@ -118,14 +118,16 @@ def to_windows(path: str | Path) -&gt; str | Path:
     C:\\hoge\\fuga
     &#34;&#34;&#34;
     flag_path = isinstance(path, Path)
-    path = str(path)
+
     if has_invalid_windows_path_chars(path):
         raise ValueError(f&#34;{path} includes invalid filepath characters on Windows&#34;)
 
-    if not is_posix_path(path):
+
+    if not is_posix_path(path) and not isinstance(path, WindowsPath):
         raise ValueError(f&#34;{path} is not a POSIX path&#34;)
 
     # Normalize slashes
+    path = str(path).replace(&#34;\\&#34;, &#34;/&#34;)
     path = re.sub(r&#34;/+&#34;, &#34;/&#34;, path)
 
     # Convert /mnt/c/ style paths to C:\
@@ -295,14 +297,16 @@ C:\hoge\fuga
     C:\\hoge\\fuga
     &#34;&#34;&#34;
     flag_path = isinstance(path, Path)
-    path = str(path)
+
     if has_invalid_windows_path_chars(path):
         raise ValueError(f&#34;{path} includes invalid filepath characters on Windows&#34;)
 
-    if not is_posix_path(path):
+
+    if not is_posix_path(path) and not isinstance(path, WindowsPath):
         raise ValueError(f&#34;{path} is not a POSIX path&#34;)
 
     # Normalize slashes
+    path = str(path).replace(&#34;\\&#34;, &#34;/&#34;)
     path = re.sub(r&#34;/+&#34;, &#34;/&#34;, path)
 
     # Convert /mnt/c/ style paths to C:\
