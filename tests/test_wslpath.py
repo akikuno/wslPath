@@ -1,5 +1,6 @@
 import pytest
 
+from pathlib import Path
 from src.wslPath import to_posix
 from src.wslPath import to_windows
 from src.wslPath import has_invalid_windows_path_chars
@@ -51,6 +52,9 @@ def test_to_posix_relatives4():
 def test_to_posix_absolute():
     assert to_posix(r"C:\\hoge\\fuga") == "/mnt/c/hoge/fuga"
 
+def test_to_posix_path_object():
+    assert to_posix(Path(r"C:\\hoge\\fuga")) == Path("/mnt/c/hoge/fuga")
+
 ################################
 
 def test_to_windows_InvalidCharacter():
@@ -81,3 +85,6 @@ def test_to_windows_relatives3():
 
 def test_to_windows_absolute():
     assert to_windows(r"/mnt/c/hoge/fuga") == "C:\\hoge\\fuga"
+
+def test_to_windows_path_object():
+    assert to_windows(Path(r"/mnt/c/hoge/fuga")) == Path("C:\\hoge\\fuga")

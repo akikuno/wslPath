@@ -1,10 +1,13 @@
-import re
+from __future__ import annotations
 
+import re
+from pathlib import Path
 """Convert between Linux and Windows path in WSL (Windows Subsystem for Linux).
 """
 
-def is_windows_path(path: str) -> bool:
+def is_windows_path(path: str | Path) -> bool:
     """Determine if the given path is in Windows format."""
+    path = str(path)
     # Check for the current directory
     if path == ".":
         return True
@@ -12,16 +15,18 @@ def is_windows_path(path: str) -> bool:
     return bool(re.match(r'^[A-Za-z]:\\', path)) or '\\' in path
 
 
-def is_posix_path(path: str) -> bool:
+def is_posix_path(path: str | Path) -> bool:
     """Determine if the given path is in POSIX format."""
+    path = str(path)
     # Check for the current directory
     if path == ".":
         return True
     return '/' in path and not '\\' in path
 
 
-def has_invalid_windows_path_chars(path: str) -> bool:
+def has_invalid_windows_path_chars(path: str | Path) -> bool:
     """Check if the given path contains invalid Windows path characters."""
+    path = str(path)
     # Check for invalid characters in filenames or directory names
     invalid_chars_pattern = re.compile(r'[\^<>"|?*]')
     invalid_backslash = re.compile(r'(?<=[^A-Za-z0-9]):|:(?=[^\\])')
@@ -38,7 +43,7 @@ def has_invalid_windows_path_chars(path: str) -> bool:
 # main
 ###########################################################
 
-def to_posix(path_windows: str) -> str:
+def to_posix(path: str | Path) -> str | Path:
     """Convert a Windows path to a POSIX path
     Examples:
         >>> import wslPath
@@ -50,24 +55,29 @@ def to_posix(path_windows: str) -> str:
         >>> wslPath.to_posix(pathwin)
         /mnt/c/hoge/fuga
     """
-    if not is_windows_path(path_windows):
-        raise ValueError(f"{path_windows} is an invalid Windows path")
+    flag_path = isinstance(path, Path)
+    path = str(path)
+    if not is_windows_path(path):
+        raise ValueError(f"{path} is an invalid Windows path")
 
     # Remove consecutive backslashes
-    path_windows = re.sub(r"\\\\+", r"\\", path_windows)
-    path_posix = path_windows.replace("\\", "/")
+    path = re.sub(r"\\\\+", r"\\", path)
+    path = path.replace("\\", "/")
 
     # Convert drive letter to POSIX format
     drive_pattern = re.compile(r"^([A-Z]):/")
-    if drive_pattern.search(path_posix):
-        drive, directory = path_posix.split(":/", 1)
+    if drive_pattern.search(path):
+        drive, directory = path.split(":/", 1)
         drive = drive.lower()
-        path_posix = f"/mnt/{drive}/{directory}"
+        path = f"/mnt/{drive}/{directory}"
 
-    return path_posix
+    if flag_path:
+        path = Path(path)
+
+    return path
 
 
-def to_windows(path_posix: str) -> str:
+def to_windows(path: str | Path) -> str | Path:
     """Convert a POSIX path to a Windows path
     Examples:
     >>> import wslPath
@@ -79,22 +89,28 @@ def to_windows(path_posix: str) -> str:
     >>> wslPath.to_windows(pathposix)
     C:\\hoge\\fuga
     """
+    flag_path = isinstance(path, Path)
+    path = str(path)
+    if has_invalid_windows_path_chars(path):
+        raise ValueError(f"{path} includes invalid filepath characters on Windows")
 
-    if has_invalid_windows_path_chars(path_posix):
-        raise ValueError(f"{path_posix} includes invalid filepath characters on Windows")
-
-    if not is_posix_path(path_posix):
-        raise ValueError(f"{path_posix} is not a POSIX path")
+    if not is_posix_path(path):
+        raise ValueError(f"{path} is not a POSIX path")
 
     # Normalize slashes
-    path_posix = re.sub(r"/+", "/", path_posix)
+    path = re.sub(r"/+", "/", path)
 
     # Convert /mnt/c/ style paths to C:\
-    if path_posix.startswith("/mnt/"):
-        drive_letter = path_posix[5].upper()
-        path_posix = drive_letter + ":" + path_posix[6:]
+    if path.startswith("/mnt/"):
+        drive_letter = path[5].upper()
+        path = drive_letter + ":" + path[6:]
 
-    return path_posix.replace("/", "\\")
+    path = path.replace("/", "\\")
+
+    if flag_path:
+        path = Path(path)
+
+    return path
 
 
 
