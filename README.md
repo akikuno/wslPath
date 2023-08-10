@@ -4,9 +4,10 @@
 [![Python](https://img.shields.io/pypi/pyversions/wslPath.svg?label=Python&color=blue&style=flat-square)](https://pypi.org/project/wslPath/)
 [![PyPI](https://img.shields.io/pypi/v/wslPath.svg?label=PyPI&color=orange&style=flat-square)](https://pypi.org/project/wslPath/)
 [![Conda](https://img.shields.io/conda/v/conda-forge/wslPath?label=Conda&color=orange&style=flat-square)](https://anaconda.org/conda-forge/wslpath)
+
 # wslPath
 
-`wslPath` is a Python module to convert between Windows and POSIX path in WSL
+`wslPath` is a Python module to convert between Windows and POSIX paths in WSL
 
 ## Install
 
@@ -31,24 +32,24 @@ import wslPath
 
 ## Relative path
 pathwin = "hoge\\fuga"
-wslPath.toPosix(pathwin)
+wslPath.to_posix(pathwin)
 # -> "hoge/fuga"
 
 ## Absolute path
 pathwin = "C:\\hoge\\fuga"
-wslPath.toPosix(pathwin)
+wslPath.to_posix(pathwin)
 # -> "/mnt/c/hoge/fuga"
 
 # Posix to Windows
 
 ## Relative path
 pathposix = "hoge/fuga"
-wslPath.toWindows(pathposix)
+wslPath.to_windows(pathposix)
 # -> "hoge\\fuga"
 
 ## Absolute path
 pathposix = "/mnt/c/hoge/fuga"
-wslPath.toWindows(pathposix)
+wslPath.to_windows(pathposix)
 # -> "C:\\hoge\\fuga"
 
 ```
