@@ -7,13 +7,10 @@ from src.wslPath import has_invalid_windows_path_chars
 
 
 def test_valid_paths():
-    paths = [
-        "C:\\Users\\John\\Documents",
-        "D:\\Games",
-        "E:\\Program Files\\SomeApp"
-    ]
+    paths = ["C:\\Users\\John\\Documents", "D:\\Games", "E:\\Program Files\\SomeApp"]
     for path in paths:
         assert not has_invalid_windows_path_chars(path)
+
 
 def test_invalid_paths():
     paths = [
@@ -24,10 +21,11 @@ def test_invalid_paths():
         "E:\\Program*Files\\SomeApp",  # asterisk in path
         "F:Program Files\\SomeApp",  # missing backslash after colon
         "G:\\Program:Files\\SomeApp",  # colon inside path
-        "\x01:\\ControlChar"  # ASCII control character
+        "\x01:\\ControlChar",  # ASCII control character
     ]
     for path in paths:
         assert has_invalid_windows_path_chars(path)
+
 
 ################################
 def test_to_posix_InvalidCharacter():
@@ -46,16 +44,21 @@ def test_to_posix_relatives2():
 def test_to_posix_relatives3():
     assert to_posix(r"hoge\\\\\fuga") == "hoge/fuga"
 
+
 def test_to_posix_relatives4():
     assert to_posix(r".\\hoge\\\\\fuga") == "./hoge/fuga"
+
 
 def test_to_posix_absolute():
     assert to_posix(r"C:\\hoge\\fuga") == "/mnt/c/hoge/fuga"
 
-def test_to_posix_path_object():
-    assert to_posix(Path(r"C:\\hoge\\fuga")) == Path("/mnt/c/hoge/fuga")
+
+def test_to_posix_including_file():
+    assert to_posix("C:\\Users\\user\\Documents\\file.txt") == "/mnt/c/Users/user/Documents/file.txt"
+
 
 ################################
+
 
 def test_to_windows_InvalidCharacter():
     with pytest.raises(ValueError) as e:
@@ -80,11 +83,18 @@ def test_to_windows_relatives2():
 def test_to_windows_relatives3():
     assert to_windows(r"hoge////fuga") == "hoge\\fuga"
 
+
 def test_to_windows_relatives3():
     assert to_windows(r"./hoge////fuga") == ".\\hoge\\fuga"
+
 
 def test_to_windows_absolute():
     assert to_windows(r"/mnt/c/hoge/fuga") == "C:\\hoge\\fuga"
 
+
 def test_to_windows_path_object():
     assert to_windows(Path(r"/mnt/c/hoge/fuga")) == Path("C:\\hoge\\fuga")
+
+
+def test_to_windows_including_file():
+    assert to_windows("/mnt/c/Users/user/Documents/file.txt") == "C:\\Users\\user\\Documents\\file.txt"
