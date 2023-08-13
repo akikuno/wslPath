@@ -8,11 +8,13 @@ setuptools.setup(
     version="0.4.1",
     author="Akihiro Kuno",
     author_email="akuno@md.tsukuba.ac.jp",
-    description="Python module to convert between Windows and POSIX path in WSL",
+    description="Python module to convert between Windows and POSIX path",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/akikuno/wslPath",
-    packages=setuptools.find_packages(where="src",),
+    packages=setuptools.find_packages(
+        where="src",
+    ),
     package_dir={"": "src"},
     classifiers=[
         "Programming Language :: Python :: 3",
