@@ -41,9 +41,8 @@ hljs.highlightAll();
 <pre><code class="language-python">conda install -c conda-forge wslPath
 </code></pre>
 <h2 id="usages">Usages</h2>
+<h3 id="windows-to-posix">Windows to Posix</h3>
 <pre><code class="language-python">import wslPath
-
-# Windows to Posix
 
 ## Relative path
 pathwin = &quot;hoge\\fuga&quot;
@@ -54,8 +53,9 @@ wslPath.to_posix(pathwin)
 pathwin = &quot;C:\\hoge\\fuga&quot;
 wslPath.to_posix(pathwin)
 # -&gt; &quot;/mnt/c/hoge/fuga&quot;
-
-# Posix to Windows
+</code></pre>
+<h3 id="posix-to-windows">Posix to Windows</h3>
+<pre><code class="language-python">import wslPath
 
 ## Relative path
 pathposix = &quot;hoge/fuga&quot;
@@ -66,8 +66,20 @@ wslPath.to_windows(pathposix)
 pathposix = &quot;/mnt/c/hoge/fuga&quot;
 wslPath.to_windows(pathposix)
 # -&gt; &quot;C:\\hoge\\fuga&quot;
+</code></pre>
+<h3 id="automatically-convert-path-format-to-match-the-operating-system">Automatically Convert Path Format to Match the Operating System</h3>
+<pre><code class="language-python">import wslPath
 
-# Identify path type (POSIX or Windows)
+path = &quot;hoge/fuga&quot;
+wslPath.wslpath(path) # Windows OS
+# -&gt; &quot;hoge\\fuga&quot;
+
+path = &quot;hoge\\fuga&quot;
+wslPath.wslpath(path) # POSIX OS
+# -&gt; &quot;hoge/fuga&quot;
+</code></pre>
+<h3 id="identify-path-type-posix-or-windows">Identify path type (POSIX or Windows)</h3>
+<pre><code class="language-python">import wslPath
 
 path = &quot;hoge/fuga&quot;
 wslPath.is_posix_path(path)
@@ -108,7 +120,13 @@ wslPath.is_windows_path(path)
 <ul>
 <li><a href="#wslpath">wslPath</a><ul>
 <li><a href="#install">Install</a></li>
-<li><a href="#usages">Usages</a></li>
+<li><a href="#usages">Usages</a><ul>
+<li><a href="#windows-to-posix">Windows to Posix</a></li>
+<li><a href="#posix-to-windows">Posix to Windows</a></li>
+<li><a href="#automatically-convert-path-format-to-match-the-operating-system">Automatically Convert Path Format to Match the Operating System</a></li>
+<li><a href="#identify-path-type-posix-or-windows">Identify path type (POSIX or Windows)</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
