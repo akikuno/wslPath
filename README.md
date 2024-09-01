@@ -24,10 +24,10 @@ conda install -c conda-forge wslPath
 
 ## Usages
 
+### Windows to Posix
+
 ```python
 import wslPath
-
-# Windows to Posix
 
 ## Relative path
 pathwin = "hoge\\fuga"
@@ -38,8 +38,12 @@ wslPath.to_posix(pathwin)
 pathwin = "C:\\hoge\\fuga"
 wslPath.to_posix(pathwin)
 # -> "/mnt/c/hoge/fuga"
+```
 
-# Posix to Windows
+### Posix to Windows
+
+```python
+import wslPath
 
 ## Relative path
 pathposix = "hoge/fuga"
@@ -50,8 +54,26 @@ wslPath.to_windows(pathposix)
 pathposix = "/mnt/c/hoge/fuga"
 wslPath.to_windows(pathposix)
 # -> "C:\\hoge\\fuga"
+```
 
-# Identify path type (POSIX or Windows)
+### Automatically Convert Path Format to Match the Operating System
+
+```python
+import wslPath
+
+path = "hoge/fuga"
+wslPath.wslpath(path) # Windows OS
+# -> "hoge\\fuga"
+
+path = "hoge\\fuga"
+wslPath.wslpath(path) # POSIX OS
+# -> "hoge/fuga"
+```
+
+### Identify path type (POSIX or Windows)
+
+```python
+import wslPath
 
 path = "hoge/fuga"
 wslPath.is_posix_path(path)
