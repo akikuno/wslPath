@@ -32,7 +32,7 @@ hljs.highlightAll();
 <a href="https://pypi.org/project/wslPath/"><img alt="PyPI" src="https://img.shields.io/pypi/v/wslPath.svg?label=PyPI&amp;color=orange&amp;style=flat-square"></a>
 <a href="https://anaconda.org/conda-forge/wslpath"><img alt="Conda" src="https://img.shields.io/conda/v/conda-forge/wslPath?label=Conda&amp;color=orange&amp;style=flat-square"></a></p>
 <h1 id="wslpath">wslPath</h1>
-<p><code><a title="wslPath" href="#wslPath">wslPath</a></code> is a Python module to convert between Windows and POSIX paths in WSL</p>
+<p><code><a title="wslPath" href="#wslPath">wslPath</a></code> is a Python module designed to convert paths between Windows and POSIX formats within the Windows Subsystem for Linux (WSL).</p>
 <h2 id="install">Install</h2>
 <p>From <a href="https://pypi.org/project/wslPath/">PyPI</a>:</p>
 <pre><code class="language-python">pip install wslPath
@@ -78,7 +78,7 @@ path = &quot;hoge\\fuga&quot;
 wslPath.wslpath(path) # POSIX OS
 # -&gt; &quot;hoge/fuga&quot;
 </code></pre>
-<h3 id="identify-path-type-posix-or-windows">Identify path type (POSIX or Windows)</h3>
+<h3 id="identify-path-type-windows-or-posix">Identify path type (Windows or POSIX)</h3>
 <pre><code class="language-python">import wslPath
 
 path = &quot;hoge/fuga&quot;
@@ -124,7 +124,7 @@ wslPath.is_windows_path(path)
 <li><a href="#windows-to-posix">Windows to Posix</a></li>
 <li><a href="#posix-to-windows">Posix to Windows</a></li>
 <li><a href="#automatically-convert-path-format-to-match-the-operating-system">Automatically Convert Path Format to Match the Operating System</a></li>
-<li><a href="#identify-path-type-posix-or-windows">Identify path type (POSIX or Windows)</a></li>
+<li><a href="#identify-path-type-windows-or-posix">Identify path type (Windows or POSIX)</a></li>
 </ul>
 </li>
 </ul>
