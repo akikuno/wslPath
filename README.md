@@ -6,7 +6,7 @@
 
 # wslPath
 
-`wslPath` is a Python module to convert between Windows and POSIX paths in WSL
+`wslPath` is a Python module designed to convert paths between Windows and POSIX formats within the Windows Subsystem for Linux (WSL).
 
 ## Install
 
@@ -70,7 +70,7 @@ wslPath.wslpath(path) # POSIX OS
 # -> "hoge/fuga"
 ```
 
-### Identify path type (POSIX or Windows)
+### Identify path type (Windows or POSIX)
 
 ```python
 import wslPath
